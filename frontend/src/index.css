@@ -1,0 +1,95 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/figtree";
+
+@theme {
+  /* Typography - Using Figtree for a modern, global look */
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+
+  /* --- Global Trust Palette (International Corporate) --- */
+  
+  /* Light Mode */
+  --color-background: oklch(0.99 0.005 240);      /* Clean, cool off-white */
+  --color-foreground: oklch(0.15 0.02 250);      /* Deep Navy text */
+  
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.15 0.02 250);
+  
+  --color-primary: oklch(0.48 0.14 245);         /* Trustworthy Corporate Blue */
+  --color-primary-foreground: oklch(0.99 0 0);
+  
+  --color-secondary: oklch(0.96 0.01 240);
+  --color-secondary-foreground: oklch(0.15 0.02 250);
+  
+  --color-muted: oklch(0.96 0.01 240);
+  --color-muted-foreground: oklch(0.45 0.02 245);
+  
+  --color-accent: oklch(0.92 0.04 245);          /* Soft blue highlight */
+  --color-accent-foreground: oklch(0.48 0.14 245);
+
+  --color-destructive: oklch(0.60 0.18 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+  
+  --color-border: oklch(0.91 0.01 240);          /* Subtle slate borders */
+  --color-input: oklch(0.91 0.01 240);
+  --color-ring: oklch(0.48 0.14 245 / 30%);
+
+  /* Radius & Shadows */
+  --radius-lg: 0.75rem;                          /* Slightly softer for modern feel */
+  --radius-md: calc(var(--radius-lg) * 0.8);
+  --radius-sm: calc(var(--radius-lg) * 0.6);
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+}
+
+/* --- Dark Mode: Executive Midnight --- */
+@custom-variant dark (&:is(.dark *));
+
+@theme dark {
+  --color-background: oklch(0.14 0.015 255);     /* Deep Executive Navy */
+  --color-foreground: oklch(0.98 0.005 240);
+  
+  --color-card: oklch(0.18 0.02 255);            /* Subtle elevation Navy */
+  --color-card-foreground: oklch(0.98 0.005 240);
+  
+  --color-primary: oklch(0.65 0.16 245);         /* Vibrant Electric Azure */
+  --color-primary-foreground: oklch(0.14 0.015 255);
+  
+  --color-muted: oklch(0.22 0.02 255);
+  --color-muted-foreground: oklch(0.70 0.01 240);
+  
+  --color-accent: oklch(0.25 0.03 245);
+  --color-border: oklch(1 0 0 / 10%);            /* Translucent borders for depth */
+  --color-input: oklch(1 0 0 / 10%);
+}
+
+/* --- Base Layout & Polish --- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Subtle mesh gradient for that "premium" feel */
+    background-image: radial-gradient(at 0% 0%, var(--color-primary / 3%) 0, transparent 50%),
+                      radial-gradient(at 100% 100%, var(--color-primary / 2%) 0, transparent 50%);
+  }
+
+  /* Smooth transitions for theme switching */
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* --- Component Utilities --- */
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border shadow-sm;
+  }
+  
+  .stat-card-gradient {
+    background: linear-gradient(135deg, var(--color-card) 0%, var(--color-accent / 20%) 100%);
+  }
+}
