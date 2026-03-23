@@ -212,6 +212,61 @@ Example POST body:
 - govt_id is unique in client model.
 - Use a new govt_id or leave govt_id empty.
 
+## Deploy On Vercel
+
+Deploy backend and frontend as two separate Vercel projects.
+
+### 1. Push code to GitHub
+
+```bash
+git add .
+git commit -m "Configure Vercel deployment for frontend and backend"
+git push origin main
+```
+
+### 2. Deploy backend (first)
+
+1. In Vercel, click **Add New Project** and import this repository.
+2. Set **Root Directory** to `backend`.
+3. Keep framework as **Other** (auto-detected).
+4. Add backend environment variables:
+  - `MONGO_URI` = your MongoDB connection string
+  - `FRONTEND_URL` = `https://<your-frontend-domain>.vercel.app`
+  - `PORT` = `5000` (optional)
+5. Deploy.
+
+Backend endpoints will be served from:
+
+- `https://<your-backend-domain>.vercel.app/api/clients`
+- `https://<your-backend-domain>.vercel.app/api/tasks`
+
+### 3. Deploy frontend (second)
+
+1. In Vercel, click **Add New Project** and import the same repository again.
+2. Set **Root Directory** to `frontend`.
+3. Framework should be detected as **Vite**.
+4. Add frontend environment variable:
+  - `VITE_API_BASE_URL` = `https://<your-backend-domain>.vercel.app/api`
+5. Deploy.
+
+### 4. Update backend CORS and redeploy
+
+After frontend URL is final, set backend `FRONTEND_URL` to your frontend domain:
+
+- `https://<your-frontend-domain>.vercel.app`
+
+Then redeploy backend.
+
+If you need preview deployments too, use comma-separated values in `FRONTEND_URL`, for example:
+
+`https://ledgercfo.vercel.app,https://ledgercfo-git-main-yourname.vercel.app`
+
+### 5. Verify deployment
+
+1. Open frontend URL.
+2. Add a test client.
+3. Confirm client and tasks operations work without CORS errors.
+
 ## Recommended next improvements
 
 - Add centralized backend error middleware.
