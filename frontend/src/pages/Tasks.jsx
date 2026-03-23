@@ -27,41 +27,15 @@ function Tasks() {
 
   const mutation = useMutation({
     mutationFn: updateTaskStatus,
-    onMutate: async ({ id, status }) => {
+    onMutate: async () => {
       setUpdateError("");
-      await queryClient.cancelQueries({ queryKey: ["tasks", clientId] });
-
-      const previousTasks = queryClient.getQueryData(["tasks", clientId]) || [];
-
-      queryClient.setQueryData(["tasks", clientId], (currentTasks = []) =>
-        currentTasks.map((task) =>
-          getTaskId(task) === id ? { ...task, status: normalizeStatus(status) } : task
-        )
-      );
-
-      return { previousTasks };
     },
-    onSuccess: (updatedTask) => {
-      if (!updatedTask) return;
-
-      const updatedId = getTaskId(updatedTask);
-      queryClient.setQueryData(["tasks", clientId], (currentTasks = []) =>
-        currentTasks.map((task) =>
-          getTaskId(task) === updatedId
-            ? { ...task, ...updatedTask, status: normalizeStatus(updatedTask.status) }
-            : task
-        )
-      );
-    },
-    onError: (_error, _variables, context) => {
-      if (context?.previousTasks) {
-        queryClient.setQueryData(["tasks", clientId], context.previousTasks);
-      }
-
-      setUpdateError("Could not update task status. Please try again.");
-    },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", clientId] });
+    },
+    onError: (error) => {
+      const apiMessage = error?.response?.data?.message;
+      setUpdateError(apiMessage || "Could not update task status. Please try again.");
     },
   });
 
