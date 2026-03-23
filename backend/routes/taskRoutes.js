@@ -19,6 +19,15 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Preflight handlers for browser CORS checks
+router.options("/", (req, res) => {
+  res.sendStatus(204);
+});
+
+router.options("/:id", (req, res) => {
+  res.sendStatus(204);
+});
+
 // Create task
 router.post("/", async (req, res) => {
   try {
