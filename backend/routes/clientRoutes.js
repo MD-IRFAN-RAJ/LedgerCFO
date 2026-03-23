@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
     const clients = await Client.find().sort({ createdAt: -1 });
     res.json(clients);
   } catch (error) {
+    console.error("Failed to fetch clients:", error.message);
     res.status(500).json({ message: "Failed to fetch clients" });
   }
 });
