@@ -2,7 +2,7 @@ import API from "./api";
 
 export const getClients = async () => {
   const res = await API.get("/clients");
-  return res.data;
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const createClient = async (payload) => {

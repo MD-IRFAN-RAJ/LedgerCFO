@@ -2,7 +2,7 @@ import API from "./api";
 
 export const getTasks = async (clientId) => {
   const res = await API.get(`/tasks?clientId=${clientId}`);
-  return res.data;
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const createTask = async (data) => {
