@@ -40,11 +40,16 @@ export const apiRateLimiter = rateLimit({
 export const corsGuard = (req, res, next) => {
   const origin = req.headers.origin;
 
+  res.header("Access-Control-Allow-Credentials", "true");
+
   if (origin && isOriginAllowed(origin)) {
     res.header("Access-Control-Allow-Origin", origin);
     res.header("Vary", "Origin");
     res.header("Access-Control-Allow-Methods", "GET,POST,PATCH,PUT,DELETE,OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+    );
   }
 
   if (req.method === "OPTIONS") {
