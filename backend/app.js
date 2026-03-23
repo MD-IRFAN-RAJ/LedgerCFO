@@ -1,45 +1,22 @@
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
 import dotenv from "dotenv";
 
 import clientRoutes from "./routes/clientRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import { apiRateLimiter, corsGuard, securityHeaders } from "./middleware/security.js";
 
 dotenv.config();
 
 const app = express();
 
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
-const isOriginAllowed = (origin) => {
-  if (!origin) return true;
-  if (allowedOrigins.includes(origin)) return true;
-
-  // Allow Vercel preview/prod frontend domains without manual env updates each deploy.
-  if (origin.endsWith(".vercel.app")) return true;
-
-  return false;
-};
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (isOriginAllowed(origin)) {
-      callback(null, true);
-      return;
-    }
-    callback(new Error("Not allowed by CORS"));
-  },
-  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
 // Middleware
-app.use(cors(corsOptions));
-app.use(express.json());
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+app.use(securityHeaders);
+app.use(corsGuard);
+app.use(express.json({ limit: "10kb" }));
+app.use("/api", apiRateLimiter);
 
 // Test route
 app.get("/", (req, res) => {
