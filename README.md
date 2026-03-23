@@ -23,14 +23,16 @@ It has a React frontend and a Node.js/Express backend with MongoDB.
 Below are key views of the deployed LedgerCFO interface.
 
 1. Dashboard and global client overview
+<img width="1889" height="832" alt="Screenshot 2026-03-23 130430" src="https://github.com/user-attachments/assets/94d6a996-e510-46f0-af95-ba3fea94708e" />
 
-![Dashboard and global client overview](docs/screenshots/dashboard-overview.png)
+
 
 Shows the primary portfolio view with KPI cards, search and filters, and quick navigation.
 
 2. Client cards grid view
 
-![Client cards grid view](docs/screenshots/clients-grid.png)
+<img width="1858" height="782" alt="Screenshot 2026-03-23 130444" src="https://github.com/user-attachments/assets/534b7768-1685-4e5f-bcb6-c681e9341326" />
+
 
 Highlights the card-based layout for client entities with jurisdiction tags and compliance status.
 
@@ -38,17 +40,22 @@ Highlights the card-based layout for client entities with jurisdiction tags and 
 
 ![Client table list view](docs/screenshots/clients-table.png)
 
+<img width="1823" height="530" alt="Screenshot 2026-03-23 130502" src="https://github.com/user-attachments/assets/27e48ab3-174a-4917-8cbf-13f3644d7cc3" />
+
+
 Displays a structured table for faster scanning of corporate identity, jurisdiction, and entity type.
 
 4. Task workflow console
 
-![Task workflow console](docs/screenshots/tasks-console.png)
+<img width="1856" height="815" alt="Screenshot 2026-03-23 130520" src="https://github.com/user-attachments/assets/f112cfeb-f197-4aa4-9eb1-886832bdd7b3" />
+
 
 Presents the task pipeline with overdue indicators, completion rate, filtering, and status actions.
 
 5. Add client modal
 
-![Add client modal](docs/screenshots/add-client-modal.png)
+<img width="1199" height="748" alt="Screenshot 2026-03-23 130533" src="https://github.com/user-attachments/assets/fcc56fa1-1c1e-489c-afd3-ac8d7828ccb7" />
+
 
 Captures the client intake form used to register new companies with jurisdiction and government ID details.
 
