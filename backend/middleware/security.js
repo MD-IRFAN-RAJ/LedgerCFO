@@ -42,6 +42,11 @@ export const apiRateLimiter = rateLimit({
 });
 
 export const corsGuard = (req, res, next) => {
+  // Always allow OPTIONS preflight requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
   const origin = req.headers.origin;
 
   res.header("Access-Control-Allow-Credentials", "true");
@@ -54,13 +59,6 @@ export const corsGuard = (req, res, next) => {
       "Access-Control-Allow-Headers",
       "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
     );
-  }
-
-  if (req.method === "OPTIONS") {
-    if (!isOriginAllowed(origin)) {
-      return res.status(403).json({ message: "CORS origin is not allowed" });
-    }
-    return res.sendStatus(204);
   }
 
   if (!isOriginAllowed(origin)) {
