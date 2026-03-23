@@ -7,19 +7,23 @@ const parseCsv = (value) =>
     .map((item) => item.trim())
     .filter(Boolean);
 
-const allowedOrigins = parseCsv(process.env.FRONTEND_URL);
+const getAllowedOrigins = () => parseCsv(process.env.FRONTEND_URL);
 
-const allowedOriginRegexes = parseCsv(process.env.FRONTEND_URL_REGEX)
-  .map((pattern) => {
-    try {
-      return new RegExp(pattern);
-    } catch {
-      return null;
-    }
-  })
-  .filter(Boolean);
+const getAllowedOriginRegexes = () =>
+  parseCsv(process.env.FRONTEND_URL_REGEX)
+    .map((pattern) => {
+      try {
+        return new RegExp(pattern);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 
 const isOriginAllowed = (origin) => {
+  const allowedOrigins = getAllowedOrigins();
+  const allowedOriginRegexes = getAllowedOriginRegexes();
+
   if (!origin) return true;
   if (allowedOrigins.includes(origin)) return true;
   return allowedOriginRegexes.some((regex) => regex.test(origin));
