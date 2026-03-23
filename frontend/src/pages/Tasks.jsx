@@ -13,6 +13,8 @@ const normalizeStatus = (value) => {
   return status === "completed" ? "Completed" : "Pending";
 };
 
+const getTaskId = (task) => task?._id || task?.id || "";
+
 function Tasks() {
   const { clientId } = useParams();
   const navigate = useNavigate();
@@ -25,7 +27,40 @@ function Tasks() {
 
   const mutation = useMutation({
     mutationFn: updateTaskStatus,
-    onSuccess: () => {
+    onMutate: async ({ id, status }) => {
+      setUpdateError("");
+      await queryClient.cancelQueries({ queryKey: ["tasks", clientId] });
+
+      const previousTasks = queryClient.getQueryData(["tasks", clientId]) || [];
+
+      queryClient.setQueryData(["tasks", clientId], (currentTasks = []) =>
+        currentTasks.map((task) =>
+          getTaskId(task) === id ? { ...task, status: normalizeStatus(status) } : task
+        )
+      );
+
+      return { previousTasks };
+    },
+    onSuccess: (updatedTask) => {
+      if (!updatedTask) return;
+
+      const updatedId = getTaskId(updatedTask);
+      queryClient.setQueryData(["tasks", clientId], (currentTasks = []) =>
+        currentTasks.map((task) =>
+          getTaskId(task) === updatedId
+            ? { ...task, ...updatedTask, status: normalizeStatus(updatedTask.status) }
+            : task
+        )
+      );
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["tasks", clientId], context.previousTasks);
+      }
+
+      setUpdateError("Could not update task status. Please try again.");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", clientId] });
     },
   });
@@ -42,6 +77,18 @@ function Tasks() {
 
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [updateError, setUpdateError] = useState("");
+
+  const onToggleStatus = (task) => {
+    const id = getTaskId(task);
+    if (!id) {
+      setUpdateError("Task ID is missing, so status cannot be updated.");
+      return;
+    }
+
+    const nextStatus = normalizeStatus(task.status) === "Pending" ? "Completed" : "Pending";
+    mutation.mutate({ id, status: nextStatus });
+  };
 
   const isOverdue = (task) =>
     normalizeStatus(task.status) === "Pending" && task.due_date && new Date(task.due_date) < new Date();
@@ -141,6 +188,11 @@ function Tasks() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* TASK LIST TABLE */}
           <div className="lg:col-span-8">
+            {updateError && (
+              <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {updateError}
+              </div>
+            )}
             <div className="border border-[#30363d] rounded-xl overflow-hidden bg-[#161b22]/30">
               <table className="w-full text-left border-collapse">
                 <thead className="bg-[#161b22] text-[10px] font-bold text-gray-500 uppercase tracking-[0.15em] border-b border-[#30363d]">
@@ -153,7 +205,7 @@ function Tasks() {
                 <tbody className="divide-y divide-[#30363d]">
                   {filteredTasks.length > 0 ? (
                     filteredTasks.map((task) => (
-                      <tr key={task._id} className="hover:bg-[#161b22]/80 transition-colors group">
+                      <tr key={getTaskId(task)} className="hover:bg-[#161b22]/80 transition-colors group">
                         <td className="px-6 py-4">
                           <p className={`font-bold text-sm ${normalizeStatus(task.status) === 'Completed' ? 'text-gray-600 line-through' : 'text-gray-100'}`}>
                             {task.title}
@@ -168,16 +220,30 @@ function Tasks() {
                           </p>
                         </td>
                         <td className="px-6 py-4 text-right">
+                          {(() => {
+                            const taskId = getTaskId(task);
+                            const isUpdating = mutation.isPending && mutation.variables?.id === taskId;
+
+                            return (
                           <button 
-                            onClick={() => mutation.mutate({ id: task._id, status: normalizeStatus(task.status) === 'Pending' ? 'Completed' : 'Pending'})}
+                            onClick={() => onToggleStatus(task)}
+                            disabled={isUpdating}
                             className={`p-1.5 rounded-lg border transition-all ${
                               normalizeStatus(task.status) === 'Completed' 
                               ? 'bg-green-500/10 border-green-500/30 text-green-500' 
                               : 'bg-white/5 border-white/10 text-gray-500 hover:border-[#2172d8] hover:text-[#2172d8]'
-                            }`}
+                            } ${isUpdating ? 'opacity-70 cursor-not-allowed' : ''}`}
                           >
-                            {normalizeStatus(task.status) === 'Completed' ? <CheckCircle2 size={16} /> : <ChevronRight size={16} />}
+                            {isUpdating ? (
+                              <Clock size={16} className="animate-spin" />
+                            ) : normalizeStatus(task.status) === 'Completed' ? (
+                              <CheckCircle2 size={16} />
+                            ) : (
+                              <ChevronRight size={16} />
+                            )}
                           </button>
+                            );
+                          })()}
                         </td>
                       </tr>
                     ))
