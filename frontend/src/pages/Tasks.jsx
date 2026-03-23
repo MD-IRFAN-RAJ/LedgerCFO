@@ -8,6 +8,11 @@ import {
   FileText, Briefcase, ChevronRight
 } from "lucide-react";
 
+const normalizeStatus = (value) => {
+  const status = String(value || "").trim().toLowerCase();
+  return status === "completed" ? "Completed" : "Pending";
+};
+
 function Tasks() {
   const { clientId } = useParams();
   const navigate = useNavigate();
@@ -39,17 +44,17 @@ function Tasks() {
   const [search, setSearch] = useState("");
 
   const isOverdue = (task) =>
-    task.status === "Pending" && task.due_date && new Date(task.due_date) < new Date();
+    normalizeStatus(task.status) === "Pending" && task.due_date && new Date(task.due_date) < new Date();
 
   const stats = useMemo(() => {
     const total = tasks.length;
-    const completed = tasks.filter((t) => t.status === "Completed").length;
+    const completed = tasks.filter((t) => normalizeStatus(t.status) === "Completed").length;
     // FIXED: Corrected ternary logic to avoid syntax errors
     const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
     
     return {
       total,
-      pending: tasks.filter((t) => t.status === "Pending").length,
+      pending: tasks.filter((t) => normalizeStatus(t.status) === "Pending").length,
       overdue: tasks.filter((t) => isOverdue(t)).length,
       rate,
     };
@@ -57,7 +62,7 @@ function Tasks() {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
-      const matchesStatus = statusFilter === "" || task.status === statusFilter;
+      const matchesStatus = statusFilter === "" || normalizeStatus(task.status) === statusFilter;
       const matchesSearch = `${task.title} ${task.description || ""}`.toLowerCase().includes(search.toLowerCase());
       return matchesStatus && matchesSearch;
     });
@@ -150,7 +155,7 @@ function Tasks() {
                     filteredTasks.map((task) => (
                       <tr key={task._id} className="hover:bg-[#161b22]/80 transition-colors group">
                         <td className="px-6 py-4">
-                          <p className={`font-bold text-sm ${task.status === 'Completed' ? 'text-gray-600 line-through' : 'text-gray-100'}`}>
+                          <p className={`font-bold text-sm ${normalizeStatus(task.status) === 'Completed' ? 'text-gray-600 line-through' : 'text-gray-100'}`}>
                             {task.title}
                           </p>
                           <span className="text-[10px] font-bold text-[#2172d8] uppercase bg-[#2172d8]/10 px-1.5 py-0.5 rounded">
@@ -164,14 +169,14 @@ function Tasks() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button 
-                            onClick={() => mutation.mutate({ id: task._id, status: task.status === 'Pending' ? 'Completed' : 'Pending'})}
+                            onClick={() => mutation.mutate({ id: task._id, status: normalizeStatus(task.status) === 'Pending' ? 'Completed' : 'Pending'})}
                             className={`p-1.5 rounded-lg border transition-all ${
-                              task.status === 'Completed' 
+                              normalizeStatus(task.status) === 'Completed' 
                               ? 'bg-green-500/10 border-green-500/30 text-green-500' 
                               : 'bg-white/5 border-white/10 text-gray-500 hover:border-[#2172d8] hover:text-[#2172d8]'
                             }`}
                           >
-                            {task.status === 'Completed' ? <CheckCircle2 size={16} /> : <ChevronRight size={16} />}
+                            {normalizeStatus(task.status) === 'Completed' ? <CheckCircle2 size={16} /> : <ChevronRight size={16} />}
                           </button>
                         </td>
                       </tr>
