@@ -50,7 +50,7 @@ router.patch("/:id", async (req, res) => {
     const task = await Task.findByIdAndUpdate(
       req.params.id,
       { status: normalizeStatus(req.body?.status) },
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     );
 
     if (!task) {
