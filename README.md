@@ -18,6 +18,40 @@ It has a React frontend and a Node.js/Express backend with MongoDB.
 - Backend: Node.js, Express, Mongoose, dotenv, CORS
 - Database: MongoDB Atlas or local MongoDB
 
+## Website Screenshots
+
+Below are key views of the deployed LedgerCFO interface.
+
+1. Dashboard and global client overview
+
+![Dashboard and global client overview](docs/screenshots/dashboard-overview.png)
+
+Shows the primary portfolio view with KPI cards, search and filters, and quick navigation.
+
+2. Client cards grid view
+
+![Client cards grid view](docs/screenshots/clients-grid.png)
+
+Highlights the card-based layout for client entities with jurisdiction tags and compliance status.
+
+3. Client table list view
+
+![Client table list view](docs/screenshots/clients-table.png)
+
+Displays a structured table for faster scanning of corporate identity, jurisdiction, and entity type.
+
+4. Task workflow console
+
+![Task workflow console](docs/screenshots/tasks-console.png)
+
+Presents the task pipeline with overdue indicators, completion rate, filtering, and status actions.
+
+5. Add client modal
+
+![Add client modal](docs/screenshots/add-client-modal.png)
+
+Captures the client intake form used to register new companies with jurisdiction and government ID details.
+
 ### Folder structure
 
 ```
