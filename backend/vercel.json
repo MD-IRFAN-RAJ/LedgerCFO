@@ -4,14 +4,6 @@
       "source": "/api/(.*)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://ledger-cfo-teal.vercel.app"
-        },
-        {
           "key": "Access-Control-Allow-Methods",
           "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
         },
